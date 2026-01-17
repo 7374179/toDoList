@@ -28,32 +28,26 @@
 
 <script>
     const checkBox = $('input[type="checkbox"]');
-    // $('#addBtn').on('click', function() {
-    //     console.log('hahahaha');
-    //     const list = $('#toDoListBody');
-    //     let body = `        
-    //         <div class="input-group mb-3 w-50">
-    //             <input type="text" class="form-control" value="test">
-    //             <button type="button" class="saveBtn btn btn-outline-secondary">Save</button>
-    //         </div>
-    //     `;
-    //     list.append(body);
-    // })
+
+    $(document).ready(function() {
+        getLists();
+    })
+
 
     $('input[type="checkbox"]').on('click', function(){
 
     })
 
-    $('.saveBtn').on('click', function() {
+    $('.saveBtn').on('click', async function() {
         const list = $('#savedList');
         const test = $('#content').val();
 
         try {
-            const response = fetch('/api/getList', {
+            const response = await fetch('http://localhost:3000/api/addList', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    test: test
+                    content: test
                 }),
             });
             if (!response.ok) throw new Error('서버 응답 오류');
@@ -74,12 +68,18 @@
         list.append(body);
         $('#content').val('');
     })
-
+    
+    async function getLists() {
+            const response = await fetch('http://localhost:3000/api/getLists');
+            const rawReports = await response.json();
+            console.log('rawReports: ', rawReports);
+        }
     // save버튼 누를때마다 밑에 추가되는 방식
     // 등록일 추가
     // 정렬은 등록일 기준으로 내림차순
     // 순서 변경 가능하게
     // 완료된 리스트는 체크박스 눌렀을때 취소선 생기게
     // 완료된 리스트는 별도의 창으로 이동?(선택 or 자동)
+
 
 </script>
