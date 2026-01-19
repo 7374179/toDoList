@@ -35,12 +35,42 @@ app.get('/api/getLists', async (req, res) => {
         const sql = `
             SELECT *
             FROM todo_list
+            WHERE is_deleted = '0'
         `;
         const [result] = await pool.query(sql);
         res.json(result);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: '조회 중 오류 발생', error });
+    }
+})
+
+app.put('/api/isCompleted/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { is_completed } = req.body;
+
+        const sql = `
+            UPDATE todo_list 
+            SET is_completed = ?
+            WHERE list_id = ?
+        `;
+        await pool.query(sql, [is_completed, id]);
+        res.json({ message: '수정되었습니다.', data: {is_completed} });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'DB 수정 중 오류 발생', error });
+    }
+})
+
+app.delete('/api/delete/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query('DELETE FROM todo_list WHERE list_id = ?', [id]);
+        res.json({ message: '삭제되었습니다.' });
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({ message: 'DB 삭제 중 오류 발생', error});
     }
 })
 
