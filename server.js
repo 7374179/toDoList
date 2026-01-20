@@ -32,10 +32,12 @@ app.post('/api/addList', async (req, res) => {
 
 app.get('/api/getLists', async (req, res) => {
     try {
+        // 아래 order by 작동안함
         const sql = `
             SELECT *
             FROM todo_list
             WHERE is_deleted = '0'
+            ORDER BY is_completed, created_at DESC
         `;
         const [result] = await pool.query(sql);
         res.json(result);
@@ -66,6 +68,7 @@ app.put('/api/isCompleted/:id', async (req, res) => {
 app.delete('/api/delete/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        // 여기서 삭제하는거 아니고 is_deleted = 1로 바꿀껄
         await pool.query('DELETE FROM todo_list WHERE list_id = ?', [id]);
         res.json({ message: '삭제되었습니다.' });
     } catch(error) {
